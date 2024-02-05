@@ -93,7 +93,7 @@
         emit('rowRemoved')
     }
 
-    function update_row(value:string, attr:string, row:number){
+    function update_row(value:string, attr:number, row:number){
         props.sourceList[row][attr as keyof typeof props.sourceList.value] = value
     }
 
