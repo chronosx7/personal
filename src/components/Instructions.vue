@@ -1,13 +1,12 @@
 <template>
-    <div>
+    <div style="padding: 20px;">
         <div>
             <ul class="instructions">
-                <li><span class="code-like">F1</span>, <span class="code-like">F2</span> and <span class="code-like">ESC</span> only work if the textarea beneath them is selected.</li>
-                <li><span class="code-like">F1</span> logs a new timestamp and triggers a counter, next to the clock, that shows how much time has passed <i>since the last timestamp was logged</i> (So it can appear out of sync with the clock).</li>
-                <li><span class="code-like">Log Time Difference</span> enables logging the number of seconds, minutes and hours that have passed since the last timestamp was logged.</li>
-                <li><span class="code-like">F2</span> copies logged timestamps to the system clipboard.</li>
-                <li><span class="code-like">ESC</span> deletes logged timestamps but saves a copy under the history tab.</li>
-                <li><span class="code-like">Clear History</span> deletes the timestamps permanently.</li>
+                <li><span class="code-like">F1</span> logs a new timestamp and triggers a counter, next to the clock, that shows how much time has passed <i>since the last timestamp was logged</i> (So it can seem out of sync with the clock).</li>
+                <li><span class="code-like">Copy</span> copies logged timestamps to the system clipboard.</li>
+                <li><span class="code-like">ESC</span> deletes logged timestamps.</li>
+                <!-- <li><span class="code-like">ESC</span> deletes logged timestamps but saves a copy under the history tab.</li> -->
+                <!-- <li><span class="code-like">Clear History</span> deletes the timestamps permanently.</li> -->
             </ul>
         </div>
     </div>

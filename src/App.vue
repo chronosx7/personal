@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue'
-import Timer from './components/Timer.vue'
+// import Timer from './components/Timer.vue'
+// import ProtoContainer from './components/ProtoContainer.vue';
+import TableTimer from './components/TableTimer.vue';
 
 defineComponent({
   components:{
-    Timer
+    // Timer,
+    // ProtoContainer,
+    TableTimer,
   }
 })
 
@@ -12,7 +16,7 @@ defineComponent({
 
 <template>
   <v-app>
-      <Timer />
+    <TableTimer />
   </v-app>
 </template>
 
