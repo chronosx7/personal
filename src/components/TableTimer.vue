@@ -28,22 +28,24 @@
         <v-main>
             <v-row>
                 <v-col>
-                    <div v-if="current_tab == Tabs.timer">
-                        <Stopwatch ref="stopwatch"></Stopwatch>
-                        <v-btn-group variant="outlined" style="margin-bottom: 5px;">
-                            <v-btn @click="add_record">Log Time(F1)</v-btn>
-                            <v-btn @click="copy_record">Copy</v-btn>
-                            <v-btn @click="clear_records">Clear(ESC)</v-btn>
-                        </v-btn-group>
-                        <EventsList :source-list="records" :headers="headers" v-on:row-removed="check_rows"></EventsList>
-                    </div>
+                    <div class="centered-container">
+                        <div v-if="current_tab == Tabs.timer">
+                            <Stopwatch ref="stopwatch"></Stopwatch>
+                            <v-btn-group variant="outlined" style="margin-bottom: 5px;">
+                                <v-btn @click="add_record">Log Time(F1)</v-btn>
+                                <v-btn @click="copy_record">Copy</v-btn>
+                                <v-btn @click="clear_records">Clear(ESC)</v-btn>
+                            </v-btn-group>
+                            <EventsList :source-list="records" :headers="headers" v-on:row-removed="check_rows"></EventsList>
+                        </div>
 
-                    <div v-if="current_tab == Tabs.history">
-                        Record History
-                    </div>
+                        <div v-if="current_tab == Tabs.history">
+                            Record History
+                        </div>
 
-                    <div v-if="current_tab == Tabs.instructions">
-                        <instructions />
+                        <div v-if="current_tab == Tabs.instructions">
+                            <instructions />
+                        </div>
                     </div>
                 </v-col>
             </v-row>
@@ -136,3 +138,11 @@
 
 
 </script>
+<style>
+
+.centered-container{
+    padding: 10px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+</style>
