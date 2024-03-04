@@ -115,10 +115,19 @@
     .bordered{
         border: solid 1px;
     }
-    th{
-        text-align: center !important;
-    }
     th, td{
         border-right: solid 1px rgb(220, 220, 220);
+    }
+    table{
+        border: 1px solid rgb(200, 200, 200);
+    }
+    th{
+        text-align: center !important;
+        background-color: rgb(245, 248, 250) !important;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+    td{
+        background-color: white;
     }
 </style>
