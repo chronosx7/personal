@@ -1,5 +1,5 @@
 <template>
-    <v-table fixed-header>
+    <v-table :height="height" fixed-header>
         <thead>
             <tr>
                 <th></th>
@@ -32,7 +32,7 @@
 <script setup lang="ts">
     import { ref } from 'vue';
 
-    const props = defineProps(['sourceList', 'headers'])
+    const props = defineProps(['sourceList', 'headers', 'height'])
     const emit = defineEmits(['rowRemoved'])
     const show_actions = ref(true)
 

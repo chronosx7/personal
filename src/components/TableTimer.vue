@@ -1,7 +1,8 @@
 <template>
     <div tabindex="1"
         @keyup.f1="add_record" 
-        @keyup.esc="clear_records" 
+        @keyup.esc="confirm_clear_records" 
+        class="h-100"
     >
         <v-navigation-drawer
                 v-model="drawer"
@@ -25,18 +26,39 @@
             </v-list>
         </v-navigation-drawer>
 
-        <v-main>
-            <v-row>
-                <v-col>
-                    <div class="centered-container">
-                        <div v-if="current_tab == Tabs.timer">
-                            <Stopwatch ref="stopwatch"></Stopwatch>
-                            <v-btn-group variant="outlined" style="margin-bottom: 5px;">
-                                <v-btn @click="add_record">Log Time(F1)</v-btn>
-                                <v-btn @click="copy_record">Copy</v-btn>
-                                <v-btn @click="clear_records">Clear(ESC)</v-btn>
-                            </v-btn-group>
-                            <EventsList :source-list="records" :headers="headers" v-on:row-removed="check_rows"></EventsList>
+        <v-container class="h-100">
+            <v-row fill-height>
+                <v-col cols="12">
+                    <div class="centered-container h-100">
+                        <div v-if="current_tab == Tabs.timer" class="h-100">
+
+                            <v-dialog v-model="dialog" max-width="290" 
+                            >
+                                <v-card>
+                                    <v-card-text>
+                                        Are you sure you want to clear the table?
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn @click.stop="confirm_clear_records">Cancel</v-btn>
+                                        <v-btn id="accept_clear_btn" 
+                                        @click="clear_records">Clear</v-btn>
+                                    </v-card-actions>
+                                </v-card>
+                            </v-dialog>
+
+                            <div  class="stopwatch">
+                                <Stopwatch ref="stopwatch"></Stopwatch>
+                                <v-btn-group variant="outlined" style="margin-bottom: 5px;">
+                                    <v-btn @click="add_record">Log Time(F1)</v-btn>
+                                    <v-btn @click="copy_record">Copy</v-btn>
+                                    <v-btn @click="confirm_clear_records">Clear(ESC)</v-btn>
+                                </v-btn-group>
+                            </div>
+                            <div class="h-100" ref="table_container" id="events">
+                                <EventsList :source-list="records" :headers="headers" v-on:row-removed="check_rows" :height="table_size"></EventsList>
+                            </div>
+
                         </div>
 
                         <div v-if="current_tab == Tabs.history">
@@ -49,13 +71,13 @@
                     </div>
                 </v-col>
             </v-row>
-        </v-main>
+        </v-container>
     </div>
 </template>
 <script setup lang="ts">
     import EventsList from './EventsList.vue'
     import Stopwatch, { StopwatchAPI } from './Stopwatch.vue';
-    import { ref, onMounted } from 'vue'
+    import { ref, watch, onMounted, nextTick } from 'vue'
     import Instructions from './Instructions.vue';
 
     enum Tabs {
@@ -76,6 +98,20 @@
     let drawer = ref(true)
     let rail = ref(true)
     let current_tab = ref(Tabs.timer)
+    let dialog = ref(false)
+    let current_focus:Element|null
+
+    // Event table-related attributes
+    let table_container = ref(null)
+    let table_size = ref("300px")
+
+    const handle_resize = () => {
+        if (table_container.value) {
+            const stopwatch_height = (document.querySelector(".stopwatch") as HTMLElement).offsetHeight
+            const diff = window.innerHeight - stopwatch_height - 55 + "px"
+            table_size.value = diff
+        }
+    }
 
     const stopwatch = ref(null)
     let stopwatch_ref: StopwatchAPI
@@ -86,6 +122,9 @@
      */
     onMounted(function(){
         stopwatch_ref = stopwatch.value as unknown as StopwatchAPI
+
+        window.addEventListener('resize', handle_resize)
+        handle_resize()
     })
 
     /**
@@ -99,6 +138,11 @@
         })
         stopwatch_ref.reset_counter()
         stopwatch_ref.start_counter()
+        nextTick(() => {
+            const cells = document.querySelectorAll('#events tr td input')
+            const field = cells.item(cells.length-1) as HTMLElement
+            field.focus()
+        })
     }
 
     function check_rows(){
@@ -126,16 +170,42 @@
         }
     }
 
+    // watch(dialog, async (oldVal, newVal) => {
+    //     if(newVal === true){
+    //         console.log(`Focusing previous elem ${current_focus}`)
+    //         nextTick(() => {
+    //             (current_focus as HTMLElement).focus()
+    //             current_focus = null
+    //         })
+    //     }
+    // })
+    function confirm_clear_records(){
+        current_focus = dialog.value? current_focus: document.activeElement
+        console.log(`current_focus: ${current_focus}`)
+        dialog.value = !dialog.value
+        nextTick(() => {
+            if(dialog.value === true){
+                console.log("Open dialog. Selecting clear button");
+                (document.querySelector("#accept_clear_btn") as HTMLElement).focus()
+            }
+            if(dialog.value === false && current_focus !== null){
+                console.log("Close dialog. Re-select element");
+                (current_focus as HTMLElement).focus()
+                current_focus
+            }
+        })
+    }
+
     function clear_records(){
         records.value = []
         stopwatch_ref.reset_counter()
+        dialog.value = false
     }
 
     function choose_tab(label:Tabs){
         current_tab.value = label
         console.log(`Selected tab: ${label}`)
     }
-
 
 </script>
 <style>
@@ -144,5 +214,37 @@
     padding: 10px;
     max-width: 1600px;
     margin: 0 auto;
+}
+.fixed{
+    position: fixed;
+    height: 250px;
+    border: solid 1px;
+    width: 100%;
+    top: 10px;
+}
+.offset-body{
+    position: relative;
+    margin: 200px auto 0 auto;
+    width: 100%;
+}
+.bordered{
+    border: solid 1px;
+}
+.red-border{
+    border-color: red;
+}
+.green-border{
+    border-color: green;
+}
+.h-100{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.h-20{
+    height: 20%;
+}
+.h-80{
+    height: 80%;
 }
 </style>
